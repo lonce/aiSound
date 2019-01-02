@@ -1,0 +1,21 @@
+{
+  "name": "aisound",
+  "version": "0.0.1",
+  "description": "interactive sounds for the web",
+  "main": "._aiSoundServer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "aisound",
+    "interactive",
+    "audio",
+    "sound"
+  ],
+  "author": "Lonce Wyse",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "ws": "^6.1.2"
+  }
+}

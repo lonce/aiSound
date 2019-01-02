@@ -1,0 +1,81 @@
+<!--
+This jsaSound Code is distributed under LGPL 3
+Copyright (C) 2012 National University of Singapore 
+Inquiries: director@anclab.org
+
+This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 3 of the License, or any later version.
+This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNULesser General Public License for more details.
+You should have received a copy of the GNU General Public License and GNU Lesser General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>
+-->
+<!DOCTYPE html>
+<html>
+	<head>
+	 	<!--
+		This code demonstrates 
+		a) Using a dynamically created list selector to choose sound jsaModels,
+		b) a dynamically created "Player" to display sliders for sound model parameters
+		-->
+		<!-- <link rel="stylesheet" type="text/css" href="css/appstyle.css"> -->
+		<link href="css/sliderBox.css" rel="stylesheet" type="text/css">
+		<link rel="shortcut icon" href="lw_logo.png">
+		
+		<title>aiSound</title>
+		<meta name="description" content="aiSound: an interactive sound library">
+		<script type="text/javascript">
+
+		</script>
+		<script type="module" src="aisInterface/main.js"></script>
+		<script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
+
+	</head>
+	<body id="mainPage">
+		<h1><center>aiSound</center></h1>
+		<h3>Animated Interactive Sound for Web apps</h3>
+		<p >
+			<b>aiSound</b> is essentially a collection of synthlets - individual specialized interactive synthesizers that you can use in your web apps. 
+		</p>
+		<p> <a href="">FM Mouser</a> is an example that shows how easy interactive sound can be for javascript-coding web developers. 
+		</p>
+		<p>
+			Here is the (so far very short) list of aiSounds for your exploration and exploitation.
+			<br>
+				<select id="soundSelector"></select>
+				<input id="openButt" type="button" value="Open">
+			<br> 
+		</p>
+
+		<h3> The Sound Model API for Web Developers: </h3>
+		<div id="API" >
+			<div id="APItext">
+				Just <font color='red'>import</font> the sound factory, create an instance of the sound, then use the aiSound API to make some noise:
+				<ul>
+					<li>play()</li>
+					<li>release()</li>
+					<li>stop()</li>
+					<br>
+					<li>setParam([name -or- number],val)</li>
+					<li>setParamNorm([name -or- number], val)</li>
+				</ul>
+				And if you need info, you can also use:
+				<ul>
+					<li>getParam([name, number], ["name", "type", "val", "normval", "min","max"])</li>
+					<li>getNumParams()</li>
+					<li>getAboutText();</li>
+				</ul>
+			</div>
+		</div>
+		<p> The simplicity and consistency makes sounds models more shareable, and enables clean, readable, generalizable, and reusable code.  
+		</p>
+		<p>
+		<b><a href="AppDemos/SwishArrow/index.html">Here</a></b> is another demo that uses animated graphics to drive the aiSound parameters<br> 
+		</p>
+
+		<hr />
+		<div id="footer">
+			<div id="Credits">
+				<a href="http://anclab.org">Arts and Creativity Lab, IDMI</a> / <a href="http://www.fas.nus.edu.sg/cnm/">Communications and New Media Department, National University of Singapore</a><br> 
+				<!-- <b>Code:</b> <a href="https://github.com/lonce/jsaSound"> https://github.com/lonce/jsaSound</a> <br /> -->
+			</div>
+		</div>
+	</body>
+</html>

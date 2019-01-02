@@ -1,0 +1,41 @@
+
+
+Can I *really* start aiSound models in the future?
+
+Can all sounds depend on getting a baseSound stop() (which disconnects?) [no matter how sounds end of quitting?]
+
+
+All sounds should manage play() while playing, even if it just stops and starts (don't ignore)
+	If they ignore shen ifpalyingP===true, then if something goes wrong prevents a stop(), they'll neverrrrrrrr be able to play again.
+
+
+Push all sounds to the limit with tickTiming.FUN
+
+
+Check that phasor works for restarts (from phase 0), pausing, etc.
+We get a stutter on restarts and even the first time it plays right now.
+
+
+Still losing some sounds when we "replace" reandomly - probably not getting stops, and then never playing agin. 
+
+
+combine aiSlider from stretched harmonics and aisound
+
+
+Make gain non linear.
+
+Restore Rich and Faous as default gor Granny
+
+Update SoundDescriptions so only demo sounds are displayed on aisound.cloud
+
+
+Discrete parameters
+
+Demos
+	FMMouse update
+
+Home page update to include demos
+
+Updates fo freesound from jsaSound->aisound
+
+Faust
