@@ -39,10 +39,15 @@ function makeRequest (method, url, doneCB) {
 //------------------------------------------------------------
 
 makeRequest('GET', "/soundList/aisDescriptors", function(data){
-    slist =  data.jsonItems;
-	// show us what you got
-    for (let i=0;i<slist.length;i++){
-    	console.log("got: " + slist[i].displayName)
+	// Create the list of models with desired modelKeys
+    for (let i=0; i<data.jsonItems.length;i++){
+    	if (data.jsonItems[i].modelKeys.includes("aiSoundDemo")){
+    		slist.push(data.jsonItems[i]);
+    		console.log("got: " + data.jsonItems[i].displayName)
+    	} else{
+    		console.log("not indluding " + data.jsonItems[i].displayName)
+    	}
+    	
     }
 
     // add display names to selector
