@@ -1,0 +1,18 @@
+#sliderBox {
+	background-image: url('wildtextures-leather-Campo-ivory.jpg');
+	width: 95%;
+	height: 95%;
+	font: 15px Gotham Book, sans-serif;
+}
+#mainPage {
+	background-image: url('hexellence/hexellence.png');
+	width: 98%;
+	height: 98%;
+	font: 15px Gotham Book, sans-serif;
+}
+.basicButton {
+	border-radius: 25px;
+	margin: 2px;
+}
+
+
