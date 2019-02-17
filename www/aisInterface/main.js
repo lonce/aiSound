@@ -16,8 +16,9 @@ var openButt = document.getElementById("openButt");
 var slist=[]
 
 var winlocation={x: 50, y: 50, update: function(){
-	winlocation.x=(winlocation.x+80)%(screen.width-500);
+	winlocation.x=(winlocation.x+80)%(screen.width-500) ;
 	winlocation.y=(winlocation.y+50)%(screen.height-600);
+	console.log(`new window location: [${winlocation.x},${winlocation.y}]`)
 }}
 
 //------------------------------------------------------------
@@ -41,13 +42,18 @@ function makeRequest (method, url, doneCB) {
 makeRequest('GET', "/soundList/aisDescriptors", function(data){
 	// Create the list of models with desired modelKeys
     for (let i=0; i<data.jsonItems.length;i++){
-    	if (data.jsonItems[i].modelKeys.includes("aiSoundDemo")){
+    	if (window.location.href.includes("local")){
+    		// if running locally, get all the sounds
     		slist.push(data.jsonItems[i]);
-    		console.log("got: " + data.jsonItems[i].displayName)
     	} else{
-    		console.log("not indluding " + data.jsonItems[i].displayName)
-    	}
-    	
+    		// otherwise, get only the ones ready for prime time
+	    	if (data.jsonItems[i].modelKeys.includes("aiSoundDemo")){
+	    		slist.push(data.jsonItems[i]);
+	    		console.log("got: " + data.jsonItems[i].displayName)
+	    	} else{
+	    		console.log("not indluding " + data.jsonItems[i].displayName)
+	    	}
+	    }
     }
 
     // add display names to selector
@@ -60,15 +66,14 @@ makeRequest('GET', "/soundList/aisDescriptors", function(data){
 
 	soundSelector.addEventListener("input", function(e){
 		console.log("selected sound is " + e.target.selectedIndex)
+		loadSoundFromPath(slist[e.target.selectedIndex].fileName);  // open slider box for sound when they are selected
 	});
 
 	//import sounds when (and only when) they are chosen
 	openButt.addEventListener("mousedown", function(e){
 		var idx = soundSelector.selectedIndex;
 		console.log("selected sound is " + idx)
-
-		loadSoundFromPath(slist[idx].fileName)
-
+		loadSoundFromPath(slist[idx].fileName) // open slider box for sound when 'open' is pushed (so you can open again without reselecting)
 	});
 });
 
@@ -94,6 +99,7 @@ function loadSoundFromPath(sndFactoryPath, params=[]) {
 			}
 
 			makeSBox(snd, ",left="+winlocation.x+",top="+winlocation.y, sndFactoryPath)
+			//makeSBox(snd, ",left="+0+",top="+0, sndFactoryPath)
 		})
 		winlocation.update();
 	});

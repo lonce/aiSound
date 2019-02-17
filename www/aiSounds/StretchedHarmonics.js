@@ -16,6 +16,7 @@ export default function (context=audioCtx) {
     m_fundamentalFrequency=261,
     m_noteNumber=60,
     m_numComponents=10,
+    m_harmonicGainSlope=-.07,  // per component index
     m_harmStretch=1, // octaves
     m_noteStretch=1,
     k_refFreq=261,
@@ -25,8 +26,8 @@ export default function (context=audioCtx) {
 
 
     // common ADSR and Gain stuff
-    m_attackDur = .02, // avoid clicks
-    m_decayDur = .3,
+    m_initAattackDur = .02, // avoid clicks
+    m_initDecayDur = .3,
 
     decayTimeout=null, //setTimeOut id
     stopTimeout=null, //setTimeOut id
@@ -34,17 +35,26 @@ export default function (context=audioCtx) {
     // nodes requiring rebuilding on each play
     m_ComponentNodes = [],
     m_ComponentFreqs = [],
-    m_ComponentAmps = [],
 
-    m_oscgain = context.createGain(),
+    m_noteGain = context.createGain(),
 
-
+    // oscillators->componentGains->noteGain->envGain
     // persistent nodes  
-    envGainNode = envGain(m_attackDur, m_decayDur, function(val=0){
+    m_ComponentGains = [],
+
+    envGainNode = envGain(m_initAattackDur, m_initDecayDur, function(val=0){
       cleanUp();
     });
-    m_oscgain.gain.value = .05;
-    m_oscgain.connect(envGainNode);
+    m_noteGain.gain.value = .05;
+    m_noteGain.connect(envGainNode);
+
+    (function init(){
+      for(let i=0;i<m_numComponents;i++){
+        m_ComponentGains[i] = context.createGain();
+        m_ComponentGains[i].gain.value=1+i*m_harmonicGainSlope;
+        m_ComponentGains[i].connect(m_noteGain)
+      }
+    }());
 
     var myCB = {};
     var myInterface = context.createBaseSound(context, {node: myCB,  output: envGainNode});
@@ -98,6 +108,8 @@ export default function (context=audioCtx) {
     );
 
     // expose the envGainNode parameter directly
+    myInterface.registerChildParam(envGainNode, "Attack");
+    myInterface.registerChildParam(envGainNode, "Release");
     myInterface.registerChildParam(envGainNode, "Gain");
 
     var buildGraph = function(){
@@ -105,19 +117,22 @@ export default function (context=audioCtx) {
       return new Promise((resolve, reject) => {
         
         for(let i=0;i<m_numComponents;i++){
-          m_ComponentNodes[i] = context.createOscillator();       
-          m_ComponentNodes[i].connect(m_oscgain);
+          //if (m_ComponentNodes[i]) m_ComponentNodes[i].disconnect();
+          m_ComponentNodes[i] = context.createOscillator(); 
+          //m_ComponentNodes[i].connect(m_ComponentGains[i]) 
+          m_ComponentNodes[i].connect(m_noteGain)
         }
 
         resolve();
       });
     }; 
     
-    myCB.onPlay = function(startVal=context.currentTime, releaseVal=null){
+    myCB.onPlay = function(startVal=context.currentTime, releaseVal=myInterface.getParam("Release")){
+        //console.log(`>>>> stretched onPlay at ${startVal}`)
         envGainNode.play(startVal, releaseVal);  
 
         // If already releasing, cancel release
-        if (myInterface.isPlaying()){
+        if (myInterface.isPlaying(startVal)){
           console.log("Stretched: cancel timeouts")
           if (decayTimeout) {
             console.log("Stretched: cancel decayTimeout")
@@ -130,6 +145,10 @@ export default function (context=audioCtx) {
             stopTimeout=null;
           }
 
+          if (releaseVal != null){
+              myInterface.release(releaseVal);
+          }
+
           return; // don't build another graph
         }  
 
@@ -137,10 +156,10 @@ export default function (context=audioCtx) {
         buildGraph().then(()=>{
 
          let fundamental = k_refFreq*Math.pow(2, m_noteStretch*(m_noteNumber-k_refNoteNumber)/12)
-          m_ComponentNodes[0].frequency.setValueAtTime(fundamental, context.currentTime);
+          m_ComponentNodes[0].frequency.setValueAtTime(fundamental, startVal);
           for(let i=1;i<m_numComponents;i++){
             let freq = fundamental*Math.pow(2, m_harmStretch*Math.log2(i))
-            m_ComponentNodes[i].frequency.setValueAtTime(freq, context.currentTime);
+            m_ComponentNodes[i].frequency.setValueAtTime(freq, startVal);
           }
      
           for(let i=0;i<m_numComponents;i++){
@@ -149,58 +168,58 @@ export default function (context=audioCtx) {
 
           if (releaseVal != null){
               myInterface.release(releaseVal);
-              console.log("Stretched: calling release("+releaseVal+")");
           }
           
         })
     };
 
     // private helper, decay now
-    var decay = function (dur=m_decayDur){
-      //envGainNode.gain.linearRampToValueAtTime(0, context.currentTime + dur);   
+    var decay = function (dur=myInterface.getParam("Release")){  
+      //console.log(`Stretched decay, now is ${context.currentTime} and time will fire stop in ${dur} secs`)
       if (dur>0){
         stopTimeout=setTimeout(function(){
           if (stopTimeout != null){
-             
-            myInterface.stop(0);
+            console.log(`<<<<<<< stretched decay stop on callback at ${context.currentTime}`)
+            myInterface.stop();
           }
         },1000*dur)
       } else{
+        console.log(`<<<<<<< stretched decay stop at ${context.currentTime}`)
         myInterface.stop();
       }
       
     };
 
-    myCB.onRelease = function (when=context.currentTime, dur=m_decayDur){
-      console.log("stretched: call envgain reselease")
+    myCB.onRelease = function (when=context.currentTime, dur=myInterface.getParam("Release")){
       envGainNode.release(when);
-      
-      if (when > context.currentTime){
-        decayTimeout=setTimeout(function(){
-          if (decayTimeout !=null){
-            decay(dur)
-          }
-        }, 1000*(when-context.currentTime))
-      } else{
-        decay(dur)
-      }
+
+
+        if (when > context.currentTime){
+          decayTimeout=setTimeout(function(){
+            //console.log("* stretched onRelease TIMEOUT")
+            if (decayTimeout !=null){
+              //console.log("* stretched onRelease TIMEOUT fire decay")
+              decay(dur)
+            }
+          }, 1000*(when-context.currentTime))
+        } else{
+          decay(dur)
+        }
+
       
     };
 
     myCB.onStop = function(val=0){
       
-      if (myInterface.isPlaying()){
-            console.log("stretched onStop: call envgain stop")
-            envGainNode.stop(val);
+      envGainNode.stop(val);
 
-            if (decayTimeout) {
-              clearTimeout(decayTimeout)
-              decayTimeout=null;
-            }
-            if (stopTimeout) {
-              clearTimeout(stopTimeout)
-              stopTimeout=null;
-            }
+      if (decayTimeout) {
+        clearTimeout(decayTimeout)
+        decayTimeout=null;
+      }
+      if (stopTimeout) {
+        clearTimeout(stopTimeout)
+        stopTimeout=null;
       }
     };
 
@@ -208,6 +227,7 @@ export default function (context=audioCtx) {
         for(let i=0;i<m_numComponents;i++){
             m_ComponentNodes[i].stop(val);
           }
+        myInterface.stop(val);
     }
 
 

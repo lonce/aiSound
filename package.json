@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.16.4",
+    "resonance-audio": "^1.0.0",
     "ws": "^6.1.2"
   }
 }

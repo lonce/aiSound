@@ -17,9 +17,8 @@ class NoiseGenerator extends AudioWorkletProcessor {
     let output = outputs[0];
     let amplitude = parameters.amplitude;
 
-    this.aindexingP=(amplitude.length != 1)? 1 : 0;
-
-    console.log("worklet process with this.aindexingP = " + this.aindexingP)
+    //this.aindexingP=(amplitude.length != 1)? 1 : 0;
+    this.aindexingP=(amplitude.length != 1)
 
     for (let channel = 0; channel < output.length; ++channel) {
       let outputChannel = output[channel];
@@ -29,7 +28,7 @@ class NoiseGenerator extends AudioWorkletProcessor {
     }      
 
 
-    //return true;
+    return true;
   }
 }
 

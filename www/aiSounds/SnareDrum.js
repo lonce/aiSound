@@ -5,9 +5,12 @@
   from envGain in order to know when we can clean up our throwaway nodes.)
   */
 import {audioCtx} from '../aisCore/baseSoundModel.js';
-
+//import ResonanceAudio from  '../aisCore/libs/resonance-audio.js'
+import '../aisCore/libs/resonance-audio.js'
 
 export default function (context=audioCtx) {
+
+    console.log(`audioCtx is ${audioCtx}`)
 
     var graph = null,
 
@@ -18,7 +21,10 @@ export default function (context=audioCtx) {
     m_wavType=0,
 
     m_Gain=.75,      
-    graphPlayingP = false;
+    //graphPlayingP = false;
+
+    m_xpos=-.7,
+    m_ypos=-.7;
 
 
     var makeNoiseBuffer=function(){
@@ -41,6 +47,11 @@ export default function (context=audioCtx) {
     var pn_snapEnvelope = context.createGain();
 
     var pn_overallGain = context.createGain();
+
+    // RESONANCE AUDIO
+    let resonanceAudioScene = new ResonanceAudio(audioCtx);
+    let source = resonanceAudioScene.createSource();
+
     
     // permanent parts of the graph
     let initBuild=function(){
@@ -51,6 +62,36 @@ export default function (context=audioCtx) {
       pn_noiseEnvelope.connect(pn_overallGain);
 
       pn_snapEnvelope.connect(pn_overallGain);
+      pn_overallGain.connect(source.input);
+
+      // RESONANCE AUDIO
+      // Define room dimensions.
+      // By default, room dimensions are undefined (0m x 0m x 0m).
+      let roomDimensions = {
+        width: 13.1,
+        height: 12.5,
+        depth: 13.4,
+      };
+
+      // Define materials for each of the room’s six surfaces.
+      // Room materials have different acoustic reflectivity.
+      let materials=['transparent','curtain-heavy','grass', 'brick-bare', 'glass-thin', 'marble']
+      let mat=materials[2];
+      let roomMaterials = {
+        // Room wall materials
+        left: mat, //'brick-bare',
+        right: mat, //'curtain-heavy',
+        front: mat,
+        back: mat, //'glass-thin',
+        // Room floor
+        down: mat, //'grass',
+        // Room ceiling
+        up: mat //'transparent',
+      };
+
+      resonanceAudioScene.setRoomProperties(roomDimensions, roomMaterials);
+
+      source.setPosition(m_xpos, m_ypos, 0);
       
     }();
 
@@ -60,10 +101,29 @@ export default function (context=audioCtx) {
 
 
     var myCB = {};
-    var myInterface = context.createBaseSound(context, {node: myCB,  output: pn_overallGain});
+    //var myInterface = context.createBaseSound(context, {node: myCB,  output: pn_overallGain});
+    var myInterface = context.createBaseSound(context, {node: myCB,  output: resonanceAudioScene.output});
     myInterface.setAboutText("Snare Drum based on https://dev.opera.com/articles/drum-sounds-webaudio/ from Chris Lowis");
     myInterface.setName("Snare Drum")
 
+
+    myInterface.registerParam(
+        "x-position", "range",
+        {"min": -10, "max": 10, "val": -.7},
+        function (i_val) {
+          m_xpos=i_val;
+          source.setPosition(m_xpos, m_ypos, 0);
+        }
+    );
+
+    myInterface.registerParam(
+        "y-position", "range",
+        {"min": -10, "max": 10, "val": -.7},
+        function (i_val) {
+          m_ypos=i_val
+          source.setPosition(m_xpos, m_ypos, 0);
+        }
+    );
 
     myInterface.registerParam(
         "Gain", "range",
@@ -106,17 +166,17 @@ export default function (context=audioCtx) {
       fn_NoiseBufferSourceNode.stop(time + 0.2);
       fn_snapNode.stop(time + 0.2);
       myInterface.stop(time + 0.2);
-      console.log("snare trigger - sending stops for time " + (time+.02))
+      //console.log("snare trigger - sending stops for time " + (time+.02))
     }
 
 
     myCB.onPlay = function(startVal=context.currentTime, releaseVal=null){
         // (re)build throwaway nodes *and* initialize their value*
-        if(graphPlayingP == true){ // short sound - just bag the too-quick play
+        if(myInterface.isPlaying(startVal)){ // short sound - just bag the too-quick play
           return;
         }
 
-        graphPlayingP = true;
+        //graphPlayingP = true;
         buildGraph().then(()=>{         
           trigger(startVal)
         })
@@ -128,10 +188,8 @@ export default function (context=audioCtx) {
     };
 
     myCB.onStop = function(when=0){
-      console.log("snare onStop")
-      if (when > context.currentTime){
-        setTimeout(function(){graphPlayingP = false;},1000*(when-context.currentTime))
-      }
+      //console.log("snare onStop")
+
 
     };
 

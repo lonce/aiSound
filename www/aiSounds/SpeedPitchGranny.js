@@ -51,7 +51,7 @@ export default function (context=audioCtx) {
       	cleanUp();
     });
 
-    var graphPlayingP = false;
+   // var graphPlayingP = false;
 
     var myCB = {};
     var myInterface = context.createBaseSound(context, {node: myCB,  output: envGainNode});
@@ -74,7 +74,7 @@ export default function (context=audioCtx) {
 		ephasor.setFreq(m_grainRate)
 
 		// If already releasing, cancel release
-        if (graphPlayingP==true){
+        if (myInterface.isPlaying()){
           return; // don't build another graph
         }
 
@@ -125,7 +125,7 @@ export default function (context=audioCtx) {
 
   			});
 
-			graphPlayingP = true;
+			//graphPlayingP = true;
 			if (releaseVal != null){
 			  myInterface.release(releaseVal);
 			}
@@ -150,7 +150,7 @@ export default function (context=audioCtx) {
 
     var cleanUp=function(val){
         ephasor.stop();
-        graphPlayingP=false;
+        //graphPlayingP=false;
     }
 
 

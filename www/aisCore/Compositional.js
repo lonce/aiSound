@@ -50,7 +50,7 @@ export default class CompositeAudioNode {
   }
   
   disconnect () {
-    //console.log("CompositeAudioNode.disconnect");
+    //console.log(" ...compositional  disconnect")
     if (this.numberOfOutputs > 0){
       this._output.disconnect.apply(this._output, arguments);
     }

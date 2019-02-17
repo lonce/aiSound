@@ -1,3 +1,11 @@
+Expose attack and decay times on pretty much all sounds.
+
+Fix phasor so that "stop" pauses properly, and so that you can start at any phase.
+Fix phasor to work in reverse (use ToneMatrix to test)
+
+
+Fix connect/disconect to cound number of connection properly.
+
 
 
 Can I *really* start aiSound models in the future?
@@ -24,7 +32,6 @@ combine aiSlider from stretched harmonics and aisound
 
 Make gain non linear.
 
-Restore Rich and Faous as default gor Granny
 
 Update SoundDescriptions so only demo sounds are displayed on aisound.cloud
 
@@ -39,3 +46,9 @@ Home page update to include demos
 Updates fo freesound from jsaSound->aisound
 
 Faust
+
+//1) remove garphPlayingP from all sounds
+//1) remove isPlayingP() in onStop - it will always return false. You are already not playing when it gets called. 
+
+1) baseSound play() should only connect to destination if the node isn't already connected! 
+

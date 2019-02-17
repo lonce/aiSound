@@ -37,9 +37,9 @@ export default function (context=audioCtx) {
    
     envGainNode = envGain(m_attackDur, m_decayDur, function(val=0){
       cleanUp();
-    }),
+    });
 
-    graphPlayingP = false;
+    //graphPlayingP = false;
 
     var myCB = {};
     var myInterface = context.createBaseSound(context, {node: myCB,  output: envGainNode});
@@ -107,7 +107,7 @@ export default function (context=audioCtx) {
         envGainNode.play(startVal, releaseVal);  
 
         // If already releasing, cancel release
-        if (graphPlayingP==true){
+        if (myInterface.isPlaying(startVal)){
           if (decayTimeout) {
             clearTimeout(decayTimeout)
             decayTimeout=null;
@@ -138,7 +138,7 @@ export default function (context=audioCtx) {
           oscModNode.start(startVal);
           m_CarrierNode.start(startVal);
 
-          graphPlayingP = true;
+          //graphPlayingP = true;
           if (releaseVal != null){
               myInterface.release(releaseVal);
           }
@@ -154,7 +154,7 @@ export default function (context=audioCtx) {
       if (dur>0){
         stopTimeout=setTimeout(function(){myInterface.stop(0)},1000*dur)
       } else{
-        myInterface.stop();
+        myInterface.stop(0);
       }
       
     };
@@ -163,17 +163,17 @@ export default function (context=audioCtx) {
       envGainNode.release(when);
       
       if (when > context.currentTime){
-        decayTimeout=setTimeout(function(){decay(dur)}, 1000*(when-context.currentTime))
+        decayTimeout=setTimeout(function(){decay(m_decayDur)}, 1000*(when-context.currentTime))
       } else{
-        decay(dur)
+        decay(m_decayDur)
       }
       
     };
 
     myCB.onStop = function(val=0){
-      if (graphPlayingP){
+      //if (graphPlayingP){
             envGainNode.stop(val);
-            graphPlayingP=false;
+            //graphPlayingP=false;
             //overallGain.disconnect();
             if (decayTimeout) {
               clearTimeout(decayTimeout)
@@ -183,7 +183,7 @@ export default function (context=audioCtx) {
               clearTimeout(stopTimeout)
               stopTimeout=null;
             }
-      }
+      //}
     };
 
     var cleanUp=function(val){

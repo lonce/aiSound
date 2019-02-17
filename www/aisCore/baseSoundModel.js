@@ -44,7 +44,7 @@ class baseSound extends CompositeAudioNode {
       this.audioRecorder=null;
       this.recIndex=0;
 
-
+      /*
       var that=this;
       this.registerParam(
         "play", "range",
@@ -60,6 +60,7 @@ class baseSound extends CompositeAudioNode {
           }
         }
       );
+      */
 
   	}
 
@@ -107,6 +108,7 @@ class baseSound extends CompositeAudioNode {
   * @param t 
   */
   isPlaying(t=this.context.currentTime){
+    //console.log(`isPlaying with startTime=${this.startTime}, t=${t}, and stopTime=${this.stopTime}`)
     if (this.startTime<=t && t<this.stopTime){
       return true;
     } else {
@@ -287,13 +289,16 @@ class baseSound extends CompositeAudioNode {
 
 
   play(startVal=this.context.currentTime, releaseVal=null){
+    //console.log("----")
+    startVal = (startVal==0 ? this.context.currentTime : startVal);
     // clear stopTimeout before calling onPlay which may include a call to stop.
     if (this.stopTimeout != null){
-      console.log("BaseSound: ----------- clear timeout")
+      //console.log("BaseSound: ----------- clear timeout")
       clearTimeout(this.stopTimeout);
       this.stopTimeout=null;
     }
 
+    //console.log(`call onPlay with startVal = ${startVal}, and currentTime = ${this.context.currentTime}`)
   	this.node.onPlay(startVal, releaseVal)
     this.startTime=startVal;
     this.stopTime=BIGNUM;
@@ -304,11 +309,16 @@ class baseSound extends CompositeAudioNode {
   } 
 
   stop(i_time=this.context.currentTime) {
-    if (! this.isPlaying()) return; 
+    i_time = (i_time==0 ? this.context.currentTime : i_time);
+    //console.log(`basesound stop for ${this.m_name} with this.startTime = ${this.startTime}, i_time=${i_time}, and this.stopTime = ${this.stopTime}`);
+    if (! this.isPlaying(i_time)) {
+      return; 
+    }
 
-      this.node.onStop(i_time);
-      //bsmInterface.fire({"type": "stop", "ptime": i_time, "snd": this});        
       this.stopTime=i_time;
+      // Note: it doesn't make sense to check isPlying inside onStop - it will return false because stopTime has already been set, but isPlaying was true when stop() was called
+      this.node.onStop(i_time);    //onStop doesn't get called unless isPlaying was true when stop was called  
+      
 
       if (i_time > this.context.currentTime){
         let that=this;
@@ -322,6 +332,7 @@ class baseSound extends CompositeAudioNode {
             if (! that.isRecording){
               //console.log("basesound disconnect on time-out stop, name = " + this.m_name)
               //console.log("      that.isRecording should be false, and in face, = " + that.isRecording)
+              console.log(" ...baseSound stop disconnect")
               that.disconnect();
             }
             that.stopTimeout=null;
@@ -343,7 +354,9 @@ class baseSound extends CompositeAudioNode {
 
 
   release(i_time=this.context.currentTime) {
+    //console.log(`baseSound release, now=${this.context.currentTime}, this.startTime=${this.startTime}, and this.stopTime=${this.stopTime}`)
     this.node.onRelease(i_time);
+
         //if (i_time === undefined) i_time=0;
         //bsmInterface.fire({"type": "release", "ptime": i_time, "snd": this});
     };

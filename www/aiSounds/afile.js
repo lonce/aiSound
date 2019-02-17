@@ -33,7 +33,6 @@ export default function (context=audioCtx) {
       cleanUp();
     });
 
-    var graphPlayingP = false;
 
 	var sourceNode=null;
 
@@ -61,7 +60,7 @@ export default function (context=audioCtx) {
 		envGainNode.play(startVal, releaseVal);  
 
 		// If already releasing, cancel release
-        if (graphPlayingP==true){
+        if (myInterface.isPlaying(startVal)){
           return; // don't build another graph
         }
 
@@ -76,7 +75,7 @@ export default function (context=audioCtx) {
 			// then
 			sourceNode.start(startVal);
 
-			graphPlayingP = true;
+			//graphPlayingP = true;
 			if (releaseVal != null){
 			  myInterface.release(releaseVal);
 			}
@@ -94,14 +93,16 @@ export default function (context=audioCtx) {
 
     // called when this model gets a stop(), but not if EnvGainNode release-decays to stop.
  	myCB.onStop = function(val=0){
+ 		console.log("on stop")
  		envGainNode.stop(val);
  		cleanUp(val);
     };
 
 
     var cleanUp=function(val){
+    	myInterface.stop();
         sourceNode.stop(val);
-        graphPlayingP=false;
+        //graphPlayingP=false;
     }
 
 	// expose the envGainNode parameter directly

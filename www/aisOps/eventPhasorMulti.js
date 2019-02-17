@@ -215,8 +215,12 @@ export default function (context=audioCtx, clockInterval=.05, genAheadInterval=.
 	myInterface.start = function (freq=null, ph=null){
 		if (! m_runningP){
 			m_currentTime= audioCtx.currentTime;
-			m_freq = freq || m_freq; // seconds
-			m_currentPhase = ph || m_currentPhase; //[0,1]
+			if (freq!=null){
+				m_freq=freq;  // seconds
+			}
+			if (ph != null){
+				m_currentPhase = ph; //[0,1]
+			}
 			m_runningP=true;
 			myInterface.run();
 		}

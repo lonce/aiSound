@@ -6,6 +6,7 @@ var makesBox=function(snd,appearanceString="",sfpath) {
 	//myWindow = window.open('', snd.getName(), "width = 400,height="+500+",resizable=yes,");
 	var sname = snd.getName();
 	var astr="width = 400,height="+500+appearanceString+",location=no";
+	console.log("sliderbox astr = " + astr)
 	//myWindow = window.open('aiSound.html', '', astr);
 	myWindow = window.open('', '', astr);
 	/*
@@ -17,7 +18,7 @@ var makesBox=function(snd,appearanceString="",sfpath) {
 	myWindow.document.head.appendChild(csslink);
 	*/
 	myWindow.document.write('<html><head><title>Popup</title>');
-  	myWindow.document.write('<link rel="stylesheet" href="css/sliderBox.css">');
+  	myWindow.document.write('<link rel="stylesheet" href="ai_css/sliderBox.css">');
   	myWindow.document.write('</head><body>');
 	myWindow.document.write('</body></html>');
 	
@@ -48,11 +49,13 @@ var makesBox=function(snd,appearanceString="",sfpath) {
 
 	playBtn.addEventListener("mousedown",function(e){
 		if (! playBtn.pushed){
-			snd.setParamNorm("play", 1);
+			snd.play();
+			//.setParamNorm("play", 1);
 			playBtn.pushed=true;
 			playBtn.setAttribute('value', 'release');
 		} else {
-			snd.setParamNorm("play", 0);
+			snd.release();
+			//snd.setParamNorm("play", 0);
 			playBtn.pushed=false;
 			playBtn.setAttribute('value', 'play');
 		}
@@ -128,15 +131,18 @@ var makesBox=function(snd,appearanceString="",sfpath) {
 		pstring+="?modelname=" + sfpath;
 
 		for (i = 0; i < snd.getNumParams(); i++) {
-			if (i!=0) {
+			//if (i!=0) {
 				pstring += "&" +  snd.getParam(i, "name") +  "=";
 				pstring +=  snd.getParam(i, "val") ;
-			}
+			//}
 		}
 		urlWindow.document.write(pstring);
 	});
 
 	sliderdiv.appendChild(queryStringButt); 
+	let qbuttLabel= myWindow.document.createElement("label")
+	sliderdiv.appendChild(qbuttLabel);
+	qbuttLabel.innerHTML= "  - a URL to open this sound in this sliderbox with these parameters".fontsize(1);
 
 
 

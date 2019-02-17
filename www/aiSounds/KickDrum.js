@@ -18,7 +18,7 @@ export default function (context=audioCtx) {
     m_wavType=0,
 
     // common ADSR and Gain stuff
-    m_attackDur = .1, // avoid clicks
+    m_attackDur = .01, // avoid clicks
     m_decayDur = .5,
 
     stopTimeout=null, //setTimeOut id
@@ -29,9 +29,9 @@ export default function (context=audioCtx) {
     // persistent
     envGainNode = context.createGain(),
     overallGain = context.createGain(),
-    m_Gain=.75,      
+    m_Gain=.75;     
 
-    graphPlayingP = false;
+    //graphPlayingP = false;
 
     //initialization
     envGainNode.connect(overallGain);
@@ -56,6 +56,9 @@ export default function (context=audioCtx) {
     var buildGraph = function(){
       //Promise is only necessary if we are loading files as part of the model
       return new Promise((resolve, reject) => {
+
+        envGainNode = context.createGain();
+        envGainNode.connect(overallGain);
         
         m_OscNode = context.createOscillator();        
         m_OscNode.connect(envGainNode);
@@ -68,12 +71,16 @@ export default function (context=audioCtx) {
     myCB.onPlay = function(startVal=context.currentTime, releaseVal=null){
       //console.log("Kick ++++++++++++++++++++")
 
-        if(graphPlayingP == true){
+        if(myInterface.isPlaying(startVal)){
 
           console.log("Kick restart")
+          
           if (stopTimeout != null){
+            console.log("clear stop timeout")
             clearTimeout(stopTimeout);
+            stopTimeout=null;
           }
+          
 
           m_OscNode.frequency.cancelAndHoldAtTime(startVal);
           m_OscNode.frequency.exponentialRampToValueAtTime(m_freq, startVal + m_attackDur);
@@ -84,44 +91,62 @@ export default function (context=audioCtx) {
           envGainNode.gain.exponentialRampToValueAtTime(.001, startVal + m_attackDur + m_decayDur);
 
           //m_OscNode.stop(startVal + m_attackDur + m_decayDur);
-          myInterface.stop(startVal + m_attackDur + m_decayDur);
+          console.log("(re) set  stop timeout")
+          //myInterface.stop(startVal + m_attackDur + m_decayDur);
+          stopTimeout=setTimeout(function(){
+            myInterface.stop()
+            stopTimeout=null;
+          },1000*(m_attackDur + m_decayDur))
+
 
 
         } else{
 
-          graphPlayingP = true;
+         // graphPlayingP = true;
           // (re)build throwaway nodes *and* initialize their value*
           buildGraph().then(()=>{
 
             m_OscNode.type=waveType[m_wavType]; 
 
             m_OscNode.frequency.setValueAtTime(m_freq, startVal);
+            m_OscNode.frequency.exponentialRampToValueAtTime(m_freq, startVal + m_attackDur);
+            //m_OscNode.frequency.setValueAtTime(m_freq, startVal);
             m_OscNode.frequency.exponentialRampToValueAtTime(.001, startVal + m_attackDur + m_decayDur);
-            m_OscNode.start(startVal);
 
-            //envGainNode.gain.setValueAtTime(0, startVal );  
+
+            envGainNode.gain.setValueAtTime(0, startVal );  
+            envGainNode.gain.exponentialRampToValueAtTime(1, startVal + m_attackDur);
+            
             //envGainNode.gain.exponentialRampToValueAtTime(1, startVal + m_attackDur);
-            envGainNode.gain.setValueAtTime(1, startVal );  
+            //envGainNode.gain.setValueAtTime(1, startVal );  
             envGainNode.gain.exponentialRampToValueAtTime(.001, startVal + m_attackDur + m_decayDur);
+
+            m_OscNode.start(startVal);
             
             //m_OscNode.stop(startVal + m_attackDur + m_decayDur);
-            myInterface.stop(startVal + m_attackDur + m_decayDur);
+            //console.log("set  stop timeout")
+            //myInterface.stop(startVal + m_attackDur + m_decayDur);
+            stopTimeout=setTimeout(function(){
+              myInterface.stop()
+              stopTimeout=null;
+            },1000*(m_attackDur + m_decayDur))
+
           })
         }
     };
 
 
     myCB.onRelease = function (when=context.currentTime, dur=m_decayDur){
-
     };
 
     myCB.onStop = function(when=0){
-      console.log("kick onStop")
+      //console.log("kick onStop")
       if (when > context.currentTime){
         stopTimeout=setTimeout(function(){
-          graphPlayingP = false;
+          //graphPlayingP = false;
+          console.log("kick cleanup")
           cleanUp();
-          stopTimeout=null
+          stopTimeout=null;
         },1000*(when-context.currentTime))
       }
 

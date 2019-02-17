@@ -27,8 +27,8 @@ var polywog=function(sfactory, numPoly, ...theRest){
       na=(na+1)%numPoly;
     }
     // if you got here, they were all playing and the na points to the voiceList[n+1]
-    voiceList[na].stop();
-    console.log("next availble (stolen) = " + na)
+    voiceList[na].stop(0);
+    console.log("next availble (STEAL) = " + na)
     return na;
   }
 
@@ -62,18 +62,18 @@ var polywog=function(sfactory, numPoly, ...theRest){
           // use generic params
           if (! voiceList[nextPoly].hasOwnParams){
             let np=paramZombie.getNumParams()
-            for(let i=1;i<np;i++){  // IGNORE THE FIRST - ASSUMING IT IS PLAY
+            for(let i=0;i<np;i++){  // IGNORE THE FIRST - ASSUMING IT IS PLAY
                voiceList[nextPoly].setParam(i,paramZombie.getParam(i))
              }
            }
 
-           //console.log("polyWog will play voice " + nextPoly)
+           console.log("   polyWog will play voice zombie ps" + nextPoly)
            voiceList[nextPoly].play(stime, etime);
            lastPoly=nextPoly;
            nextPoly=nextAvailableVoice(lastPoly);
            
          } else{ // play the specific one requested using previously set parameters
-            //console.log("polyWog will play voice " + id)
+            console.log("   polyWog will play voice previousp" + id)
             voiceList[id].play(stime, etime);
             lastPoly=id;
             if (id==nextPoly){
@@ -96,10 +96,12 @@ var polywog=function(sfactory, numPoly, ...theRest){
         if (id == -1){
           for(let i=0;i<numPoly;i++){
             if (voiceList[i].isPlaying()) {
+              console.log("   polywog release " + i)
               voiceList[i].release(rtime);
             }
           }
         } else{
+          console.log("   polywog release " + i)
           voiceList[id].release(rtime);
         }
       }
@@ -116,10 +118,12 @@ var polywog=function(sfactory, numPoly, ...theRest){
         if (id == -1){
           for(let i=0;i<numPoly;i++){
             if (voiceList[i].isPlaying()) {
+              console.log("   polywog stop " + i)
               voiceList[i].stop(etime);
             }
           }
         } else{
+          console.log("   polywog stop " + i)
           voiceList[id].stop(etime);
         }
       }
@@ -130,7 +134,7 @@ var polywog=function(sfactory, numPoly, ...theRest){
           return voiceList[nextPoly];
         }
         else{
-          console.log("getSndFromPoly returning voiceList number " + id)
+          //console.log("getSndFromPoly returning voiceList number " + id)
           return voiceList[id];
         }
       }

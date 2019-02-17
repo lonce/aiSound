@@ -17,13 +17,15 @@ export default function (context=audioCtx) {
     m_freq=200, //modulation frequency
     m_wavType=0,
 
-    m_Gain=.75;      
+    m_Gain=.75;    
+
+    var stopTimeout=null;  
 
     // The buffer for the source node
     var sm={
       buffLoaded : false,
       soundBuff : context.createBuffer(2,2,44100),
-      m_soundUrl : "../audioResources/hihat.wav",
+      m_soundUrl : "https://aisound.cloud/audioResources/hihat.wav",
       loadedCB: function onLoadAudioResource(b){
         sm.soundBuff = b;
         sm.buffLoaded = true;
@@ -73,7 +75,7 @@ export default function (context=audioCtx) {
 
     var trigger=function(time){
       fn_NoiseBufferSourceNode.start(time)
-      fn_NoiseBufferSourceNode.stop(time + 0.2);
+      //console.log(`myinterface.stop in .02 secs`)
       myInterface.stop(time + 0.2);
     }
 
@@ -98,12 +100,22 @@ export default function (context=audioCtx) {
 
     };
 
-    myCB.onStop = function(val=0){
+    myCB.onStop = function(when=0){
+      //console.log(`hihat onStop`)
+      if (when > context.currentTime){
+        stopTimeout=setTimeout(function(){
+          //graphPlayingP = false;
+          //console.log("hihat cleanup")
+          cleanUp();
+          stopTimeout=null;
+        },1000*(when-context.currentTime))
+      }else{
 
+      }
     };
 
     var cleanUp=function(val){
-
+      fn_NoiseBufferSourceNode.stop();
     }
 
 

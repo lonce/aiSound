@@ -35,11 +35,11 @@ export default function (attackDur=.01, decayDur=.05, context=audioCtx, options=
     envGainNode = context.createGain(),
   
     overallGain = context.createGain(),
-    m_Gain=.75;
+    m_Gain=.5;
 
 
     //initialization
-    envGainNode.value=1.0;
+    envGainNode.value=.75;
 
     var myCB = {};
     var myInterface = context.createBaseSound(context, {node: myCB,  output: overallGain});
@@ -96,48 +96,48 @@ export default function (attackDur=.01, decayDur=.05, context=audioCtx, options=
 
     // PUBLIC INTERFACE METHOD
     myCB.onPlay = function(startVal=context.currentTime, releaseVal=null){
-      console.log("FM - on play ----------------")
-        if(myInterface.isPlaying(startVal)){
-          console.log("FM - play wihile playing!!!!!!!!!!")
+      //console.log("FM - on play ----------------")
+      if(myInterface.isPlaying(startVal)){
+        console.log("FM - play wihile playing!!!!!!!!!!")
 
-          if (decayTimeout) {
-            clearTimeout(decayTimeout)
-            decayTimeout=null;
-          }
-          if (stopTimeout) {
-            clearTimeout(stopTimeout)
-            this.stopTimeout=null;
-          }
-          //envGainNode.gain.cancelScheduledValues(startVal);
-          envGainNode.gain.cancelAndHoldAtTime(startVal);
-          envGainNode.gain.linearRampToValueAtTime(1, startVal + m_attackDur);     
-
-          myInterface.release(releaseVal); 
-          return; // don't build another graph
+        if (decayTimeout) {
+          clearTimeout(decayTimeout)
+          decayTimeout=null;
         }
+        if (stopTimeout) {
+          clearTimeout(stopTimeout)
+          this.stopTimeout=null;
+        }
+        //envGainNode.gain.cancelScheduledValues(startVal);
+        envGainNode.gain.cancelAndHoldAtTime(startVal);
+        envGainNode.gain.linearRampToValueAtTime(1, startVal + m_attackDur);     
+
+        myInterface.release(releaseVal); 
+        return; // don't build another graph
+      }
 
 
-        buildGraph().then(()=>{
-          oscModNode.frequency.setValueAtTime(m_freq, startVal); 
+      buildGraph().then(()=>{
+        oscModNode.frequency.setValueAtTime(m_freq, startVal); 
 
-          modIndexNode.gain.setValueAtTime(m_modIndex,startVal),
+        modIndexNode.gain.setValueAtTime(m_modIndex,startVal),
 
-          m_CarrierNode.type=waveType[m_carType]; 
-          m_CarrierNode.frequency.setValueAtTime(m_carFreq,startVal);
-
-
-          envGainNode.gain.setValueAtTime(0, startVal );
-          envGainNode.gain.linearRampToValueAtTime(1, startVal + m_attackDur);      
+        m_CarrierNode.type=waveType[m_carType]; 
+        m_CarrierNode.frequency.setValueAtTime(m_carFreq,startVal);
 
 
-          oscModNode.start(startVal);
-          m_CarrierNode.start(startVal);
+        envGainNode.gain.setValueAtTime(0, startVal );
+        envGainNode.gain.linearRampToValueAtTime(1, startVal + m_attackDur);      
 
-          if (releaseVal != null){
-              myInterface.release(releaseVal);
-          }
-          
-        })
+
+        oscModNode.start(startVal);
+        m_CarrierNode.start(startVal);
+
+        if (releaseVal != null){
+            myInterface.release(releaseVal);
+        }
+        
+      })
     };
 
     // private helper, decay now
@@ -145,16 +145,14 @@ export default function (attackDur=.01, decayDur=.05, context=audioCtx, options=
       envGainNode.gain.cancelAndHoldAtTime(0);
       envGainNode.gain.linearRampToValueAtTime(0, context.currentTime + dur);      
       if (dur>0){
-
         stopTimeout=setTimeout(function(){myInterface.stop(0)},1000*dur)
       } else{
-        myInterface.stop();
+        myInterface.stop(0);
       }
       
     };
 
     myCB.onRelease = function (when=context.currentTime, dur=m_decayDur){
-      console.log("    fm release")
       if (when > context.currentTime){
         decayTimeout=setTimeout(function(){decay(dur)}, 1000*(when-context.currentTime))
       } else{
@@ -163,21 +161,19 @@ export default function (attackDur=.01, decayDur=.05, context=audioCtx, options=
     };
 
     myCB.onStop = function(val=0){
-      //console.log("stop")
-      console.log("    fm stop")
-     if(myInterface.isPlaying(val)){
-            console.log("OK ::::: FM stopping")
-            oscModNode.stop(val);
-            m_CarrierNode.stop(val)
-            if (decayTimeout) {
-            clearTimeout(decayTimeout)
-            decayTimeout=null;
-          }
-          if (stopTimeout) {
-            clearTimeout(stopTimeout)
-            this.stopTimeout=null;
-          }
-        }
+
+      //console.log("OK ::::: FM stopping")
+      oscModNode.stop(val);
+      m_CarrierNode.stop(val)
+      if (decayTimeout) {
+        clearTimeout(decayTimeout)
+        decayTimeout=null;
+      }
+      if (stopTimeout) {
+        clearTimeout(stopTimeout)
+        this.stopTimeout=null;
+      }
+
     };
 
     var buildGraph = function(){

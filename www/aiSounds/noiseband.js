@@ -16,8 +16,8 @@ export default function (context=audioCtx) {
     m_cf=200, //modulation frequency
 
     // common ADSR and Gain stuff
-    m_attackDur = 1, // avoid clicks
-    m_decayDur = 1,
+    m_attackDur = .2, // avoid clicks
+    m_decayDur = 2,
 
     // nodes requiring rebuilding on each play
     noiseGeneratorNode = null,
@@ -61,7 +61,8 @@ export default function (context=audioCtx) {
     
     myCB.onPlay = function(startVal=context.currentTime, releaseVal=null){
         envGainNode.play(startVal, releaseVal);  
-        if (myInterface.isPlaying()){
+        if (myInterface.isPlaying(startVal)){
+          console.log("noiseband: got onPlay while already playing");
           return; // don't build another graph
         }  
 
@@ -83,13 +84,12 @@ export default function (context=audioCtx) {
     };
 
     myCB.onStop = function(val=0){
-      if (myInterface.isPlaying()){
-            envGainNode.stop(val);
-      }
+      envGainNode.stop(val);
     };
 
     var cleanUp=function(val){
-        //noiseGeneratorNode.stop(val);
+        myInterface.stop() // we are relying on EnvGain to let us know when to stop ourselves 
+        console.log("noiseband cleanup")
         noiseGeneratorNode.disconnect()
     }
 
