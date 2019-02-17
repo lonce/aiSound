@@ -32,7 +32,7 @@ combine aiSlider from stretched harmonics and aisound
 
 Make gain non linear.
 
-
+ 
 Update SoundDescriptions so only demo sounds are displayed on aisound.cloud
 
 
