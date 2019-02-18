@@ -2,7 +2,21 @@ import CompositeAudioNode from '../aisCore/Compositional.js';
 import * as utils from '../aisCore/utils.js';
 import resourceManager from '../aisCore/audioResourceManager.js'
 
-let audioCtx = new AudioContext(); // the same for all sounds
+var audioCtx; // the same, just one, for all sounds
+var AudioContext = window.AudioContext // Default
+    || window.webkitAudioContext // Safari and old versions of Chrome
+    || false; 
+
+if (AudioContext) {
+    // Do whatever you want using the Web Audio API
+    var audioCtx = new AudioContext();
+    // ...
+} else {
+    // Web Audio API is not supported
+    // Alert the user
+    alert("Sorry, but the Web Audio API is not supported by your browser. Please, consider upgrading to the latest version or downloading Google Chrome or Mozilla Firefox");
+}
+
 let BIGNUM = 999999999999999999999999; // need something at least 1000 times smaller than Number.MAX_VALUE!
 export {audioCtx, BIGNUM};
 
