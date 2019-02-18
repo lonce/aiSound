@@ -7,6 +7,10 @@ var AudioContext = window.AudioContext // Default
     || window.webkitAudioContext // Safari and old versions of Chrome
     || false; 
 
+var OfflineAudioContext = window.OfflineAudioContext
+    || window.webkitOfflineAudioContext
+    || false;
+    
 if (AudioContext) {
     // Do whatever you want using the Web Audio API
     var audioCtx = new AudioContext();
