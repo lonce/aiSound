@@ -192,6 +192,7 @@ export default function (context=audioCtx) {
 
     myCB.onRelease = function (when=context.currentTime, dur=myInterface.getParam("Release")){
       envGainNode.release(when);
+      //console.log(`StretchedHarm:onRelease, current time is ${context.currentTime} and when is ${when}`)
 
 
         if (when > context.currentTime){

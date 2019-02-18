@@ -160,7 +160,7 @@ export default function (attackDur=null, decayDur=null, finishedCB=null, context
 
 
     myCB.onRelease = function (when=context.currentTime, dur=m_releaseDur){
-      //console.log(`envGain onRelease,  dur=${dur}`)
+      //console.log(`envGain onRelease,  current time is ${context.currentTime}, when is ${when}, and dur=${dur}`)
 
       // clean up any scheduled timeouts
       if (decayTimeout) {

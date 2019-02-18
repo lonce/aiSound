@@ -101,7 +101,7 @@ var polywog=function(sfactory, numPoly, ...theRest){
             }
           }
         } else{
-          console.log("   polywog release " + i)
+          console.log("   polywog release " + id)
           voiceList[id].release(rtime);
         }
       }
