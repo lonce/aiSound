@@ -217,6 +217,7 @@ class baseSound extends CompositeAudioNode {
   * @param {String} i_name the name of the param you want to set 
   * @param {Number} i_val the value to set the parameter
   */
+  /*
   setParam(i_name) {
     i_name=this.testPName(i_name);
     if (! i_name) return null;
@@ -233,6 +234,48 @@ class baseSound extends CompositeAudioNode {
     this.params[i_name].value.val=arguments[1];
     this.params[i_name].f.apply(this, args);
   };
+*/
+  setParam(i_name, ival, i_prop="val") {
+    i_name=this.testPName(i_name);
+    if (! i_name) return null;
+
+    var p = this.params[i_name];
+
+    switch (i_prop){
+      case "val":
+        var args = [], i;
+        for (i = 1; i < arguments.length; i += 1) {
+          if (this.params[i_name].int){
+            args.push(Math.round(arguments[i]));
+          } else{
+            args.push(arguments[i]);
+          }
+        }
+        this.params[i_name].value.val=arguments[1];
+        this.params[i_name].f.apply(this, args);
+        break;
+      case "name":
+        console.log("setParam: Sorry, you can not change the parameter names")
+        throw "setParam: Sorry, you can not change the parameter names";
+      case "type":
+        p.type=ival;
+        break;
+      case "normval":
+        console.log("setParam: Use setParamNorm to set param with a normalized value")
+        throw "setParam: Use setParamNorm to set param with a normalized value";
+      case "min":
+        p.value.min=ival;
+        break;
+      case "max":
+        p.value.max=ival;
+        break;
+      default:
+        console.log("setParam: Parameter property " + i_prop + " not recognized")
+        throw "setParam: Parameter property " + i_prop + " not recognized";
+    }
+    
+  };
+
 
   /** 
   * Set the parameter using values in [0,1]

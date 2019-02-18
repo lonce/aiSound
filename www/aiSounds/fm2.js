@@ -21,8 +21,8 @@ export default function (context=audioCtx) {
     m_carType=0,
 
     // common ADSR and Gain stuff
-    m_attackDur = 1, // avoid clicks
-    m_decayDur = 1,
+    m_attackDur = .5, // avoid clicks
+    m_decayDur = .5,
     m_attackWhilePlayingDur = m_attackDur,//1,
 
     decayTimeout=null, //setTimeOut id
