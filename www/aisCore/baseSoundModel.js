@@ -28,7 +28,7 @@ if (AudioContext) {
 }
 
 // - - -
-/*
+
 // Safari and Firefox don't support candAndHoldAtTime, so give them a cheap substitute
 if((navigator.userAgent.indexOf("Opera") || navigator.userAgent.indexOf('OPR')) != -1 ) 
     {
@@ -78,7 +78,7 @@ if((navigator.userAgent.indexOf("Opera") || navigator.userAgent.indexOf('OPR')) 
     {
        alert('unknown browser');
     }
-    */
+
 //********************************************************************
 
 
