@@ -130,6 +130,7 @@ export default function (context=audioCtx, clockInterval=.05, genAheadInterval=.
 		if (m_runningP) {
 			let nextTick=myInterface.nextTickTime();
 			let now = audioCtx.currentTime;
+
 			while (nextTick < now+m_genAheadInterval){
 				cb(nextTick)
 			    myInterface.advanceToTick();
@@ -143,6 +144,7 @@ export default function (context=audioCtx, clockInterval=.05, genAheadInterval=.
 
 
 	myInterface.start = function (cb, freq=null, ph=null){
+
 		m_currentTime= audioCtx.currentTime;
 		m_freq = freq || m_freq; // seconds
 		m_currentPhase = ph || m_currentPhase; //[0,1]

@@ -19,6 +19,7 @@ var BaseAudioContext = window.BaseAudioContext
 if (AudioContext) {
     // Do whatever you want using the Web Audio API
     var audioCtx = new AudioContext();
+    console.log("CONSTRUCTED AUDIO CONTEXT")
     // ...
 } else {
     // Web Audio API is not supported
@@ -27,6 +28,7 @@ if (AudioContext) {
 }
 
 // - - -
+/*
 // Safari and Firefox don't support candAndHoldAtTime, so give them a cheap substitute
 if((navigator.userAgent.indexOf("Opera") || navigator.userAgent.indexOf('OPR')) != -1 ) 
     {
@@ -76,6 +78,7 @@ if((navigator.userAgent.indexOf("Opera") || navigator.userAgent.indexOf('OPR')) 
     {
        alert('unknown browser');
     }
+    */
 //********************************************************************
 
 

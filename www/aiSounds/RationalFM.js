@@ -15,7 +15,10 @@ export default function (context=audioCtx) {
 
   var myCB = {};
   var myInterface = context.createBaseSound(context, {node: myCB});
-  myInterface.setAboutText("Tree structured FM carrier/modulator ration navigation");
+  myInterface.setAboutText(`A binary tree of ratios is constructed using the Stern-Brocot sequence. 
+    The bitstring represents tree navigation from the root.  
+    The tree location determines the ratio.
+    The ratio is held constant, so *changing the carrier frequency also changes the modulator frequency.*`);
   myInterface.setName("RationalFM")
 
   myCB.onPlay = function(startVal=context.currentTime, releaseVal=null){

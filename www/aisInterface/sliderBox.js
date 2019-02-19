@@ -1,14 +1,19 @@
 import aiSlider from './aiSlider.js'
 
-var makesBox=function(snd,appearanceString="",sfpath) {
 
-	var myWindow = {};
+//var makesBox=function(snd,appearanceString="",sfpath) {
+var makesBox=function(snd,myWindow,sfpath) {
+
+	//////var myWindow = window.open('', '', astr);
+	console.log(`myWindow.document is ${myWindow.document}`)
 	//myWindow = window.open('', snd.getName(), "width = 400,height="+500+",resizable=yes,");
 	var sname = snd.getName();
-	var astr="width = 400,height="+500+appearanceString+",location=no";
-	console.log("sliderbox astr = " + astr)
+	////var astr="width = 400,height="+500+appearanceString+",location=no";
+	////console.log("sliderbox astr = " + astr)
+
+
 	//myWindow = window.open('aiSound.html', '', astr);
-	myWindow = window.open('', '', astr);
+	//myWindow = window.open('', '', astr);
 	/*
 	// Hmmmm this isn't working for styling, event thoughthe eleents of the modal dialog look right.
 	var csslink=myWindow.document.createElement("link");
@@ -17,6 +22,8 @@ var makesBox=function(snd,appearanceString="",sfpath) {
 	csslink.setAttribute('type', "text/css");
 	myWindow.document.head.appendChild(csslink);
 	*/
+
+
 	myWindow.document.write('<html><head><title>Popup</title>');
   	myWindow.document.write('<link rel="stylesheet" href="ai_css/sliderBox.css">');
   	myWindow.document.write('</head><body>');
@@ -48,12 +55,21 @@ var makesBox=function(snd,appearanceString="",sfpath) {
 	playBtn.pushed=false; 
 
 	playBtn.addEventListener("mousedown",function(e){
+		console.log("sliderbox: play button pushed")
+		//Safari doesn't resume() for sounds that don't respond immediately to user interaciton 
+		if (snd.getContext().state === 'suspended'){
+			let ctx=snd.getContext();
+			ctx.resume();
+		}
+
 		if (! playBtn.pushed){
+			console.log("sliderbox: play ")
 			snd.play();
 			//.setParamNorm("play", 1);
 			playBtn.pushed=true;
 			playBtn.setAttribute('value', 'release');
 		} else {
+			console.log("sliderbox: release ")
 			snd.release();
 			//snd.setParamNorm("play", 0);
 			playBtn.pushed=false;
@@ -120,7 +136,7 @@ var makesBox=function(snd,appearanceString="",sfpath) {
 	queryStringButt.setAttribute('type', 'button');
 	queryStringButt.style.width= '80px';
 	queryStringButt.style.borderWidth= '2px'; 
-	queryStringButt.setAttribute('value', 'QString');
+	queryStringButt.setAttribute('value', 'Query String');
 
 	queryStringButt.addEventListener("mousedown",function(e){
 		var urlWindow = window.open('', '', "width = 625,height = " + 40);
@@ -142,7 +158,7 @@ var makesBox=function(snd,appearanceString="",sfpath) {
 	sliderdiv.appendChild(queryStringButt); 
 	let qbuttLabel= myWindow.document.createElement("label")
 	sliderdiv.appendChild(qbuttLabel);
-	qbuttLabel.innerHTML= "  - a URL to open this sound in this sliderbox with these parameters".fontsize(1);
+	qbuttLabel.innerHTML= "  - a URL you can use to share this sound in this sliderbox with these parameters.".fontsize(1);
 
 
 

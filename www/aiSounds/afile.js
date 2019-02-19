@@ -100,8 +100,9 @@ export default function (context=audioCtx) {
 
 
     var cleanUp=function(val){
+    	// causes "invalid state" in safari. Apparently don't need, anywa.
+    	//sourceNode.stop(val);
     	myInterface.stop();
-        sourceNode.stop(val);
         //graphPlayingP=false;
     }
 

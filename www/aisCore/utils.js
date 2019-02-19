@@ -57,7 +57,8 @@ var raisedCosine=function(p=2, len=100){
 	for (let i=0;i<len;i++){
 		vals[i]=Math.pow((1-Math.cos(2*i*Math.PI/len))/2, p);
 	}
-	return vals;
+	// safari needs a Float32Array for setValueCurveAtTime....
+	return new Float32Array(vals);
 }
 
 export{isInteger, freesoundfix, raisedCosine, getParameterByName, QueryStringToJSON}

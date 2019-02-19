@@ -9,9 +9,18 @@ You should have received a copy of the GNU General Public License and GNU Lesser
 */
 import makeSBox from './sliderBox.js'
 import {getParameterByName, QueryStringToJSON} from '../aisCore/utils.js'
+import { importModule } from "https://uupaa.github.io/dynamic-import-polyfill/importModule.js"
+import sndFactory from 'https://aisound.cloud/aiSounds/HiHat.js'
+
 
 var soundSelector = document.getElementById("soundSelector");
 var openButt = document.getElementById("openButt");
+
+var clickSnd;
+sndFactory().then((newsnd) => {
+  clickSnd=newsnd; 
+  clickSnd.setParam("Gain", .5);
+});
 
 var slist=[]
 
@@ -66,11 +75,14 @@ makeRequest('GET', "/soundList/aisDescriptors", function(data){
 
 	soundSelector.addEventListener("input", function(e){
 		console.log("selected sound is " + e.target.selectedIndex)
-		loadSoundFromPath(slist[e.target.selectedIndex].fileName);  // open slider box for sound when they are selected
+		// Some browsers don't consider this a uwer-initiated event, so window.open gets blocked!
+		//loadSoundFromPath(slist[e.target.selectedIndex].fileName);  // open slider box for sound when they are selected
 	});
 
 	//import sounds when (and only when) they are chosen
 	openButt.addEventListener("mousedown", function(e){
+		clickSnd.play();
+		console.log(`currentTime is ${clickSnd.getContext().currentTime}`)
 		var idx = soundSelector.selectedIndex;
 		console.log("selected sound is " + idx)
 		loadSoundFromPath(slist[idx].fileName) // open slider box for sound when 'open' is pushed (so you can open again without reselecting)
@@ -82,9 +94,10 @@ function loadSoundFromPath(sndFactoryPath, params=[]) {
 		http://2ality.com/2017/01/import-operator.html
 		https://developers.google.com/web/updates/2017/11/dynamic-import
 	*/
-	import("../" + sndFactoryPath)
+	let myWindow = window.open('', '', "width = 400,height="+500+",left="+winlocation.x+",top="+winlocation.y);
+	console.log(`in loadSoundFromPath, got new window = ${myWindow}`)
+	importModule("../" + sndFactoryPath)
 	.then(factory => {
-
 		//console.log("ok, imported " + factory.default)
 		//makeSBox(factory.default(), ",left="+winlocation.x+",top="+winlocation.y)
 		factory.default().then((snd) => {
@@ -98,8 +111,9 @@ function loadSoundFromPath(sndFactoryPath, params=[]) {
 				}
 			}
 
-			makeSBox(snd, ",left="+winlocation.x+",top="+winlocation.y, sndFactoryPath)
-			//makeSBox(snd, ",left="+0+",top="+0, sndFactoryPath)
+			//makeSBox(snd, ",left="+winlocation.x+",top="+winlocation.y, sndFactoryPath)
+			makeSBox(snd, myWindow, sndFactoryPath)
+			
 		})
 		winlocation.update();
 	});

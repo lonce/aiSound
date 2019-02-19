@@ -13,6 +13,7 @@ import envGain from '../aisComponents/EnvGain2.js'
 import makePhasor from '../aisOps/eventPhasor.js'
 import {raisedCosine} from '../aisCore/utils.js'
 
+
 export default function (context=audioCtx) {
 
     var graph = null;
@@ -65,7 +66,7 @@ export default function (context=audioCtx) {
 	function onLoadAudioResource(b){
 		sm.soundBuff = b;
 		sm.buffLoaded = true;
-		console.log("Buffer Loaded!");
+		console.log("Granny:::::Buffer Loaded!");
 	}
 
 
@@ -74,22 +75,20 @@ export default function (context=audioCtx) {
 		ephasor.setFreq(m_grainRate)
 
 		// If already releasing, cancel release
-		console.log("granny: call isPlaying:::::::")
+		//console.log(`granny: call isPlaying::::::: with currentTime = ${context.currentTime}`)
         if (myInterface.isPlaying(startVal)){
-        	//console.log(`granny onplay isPlaying with startVal=${startVal}, dont restart`)
-        	//console.log(`     (granny) myInterface.startTime=${myInterface.startTime}, and myInterface.stopTime=${myInterface.stopTime}`)
           return; // don't build another graph
         }
 
 		if (sm.buffLoaded) {
 			let pbrate;
-
 			buildGraph();
 
 			// let her rip -----------------------------------------------
 			let gcounter=0;
 			grainPosition=0;
 			let grainPositionPerturbed; // computed based on grainPosition & m_setpVariation
+
 
 			ephasor.start(function(t){
   				gcounter=(gcounter+1)
