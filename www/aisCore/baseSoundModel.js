@@ -2,6 +2,7 @@ import CompositeAudioNode from '../aisCore/Compositional.js';
 import * as utils from '../aisCore/utils.js';
 import resourceManager from '../aisCore/audioResourceManager.js'
 
+//**********  nonsense for different browsers **********************************
 var audioCtx; // the same, just one, for all sounds
 var AudioContext = window.AudioContext // Default
     || window.webkitAudioContext // Safari and old versions of Chrome
@@ -9,6 +10,10 @@ var AudioContext = window.AudioContext // Default
 
 var OfflineAudioContext = window.OfflineAudioContext
     || window.webkitOfflineAudioContext
+    || false;
+
+var BaseAudioContext = window.BaseAudioContext
+    || window.webkitBaseAudioContext
     || false;
     
 if (AudioContext) {
@@ -20,6 +25,59 @@ if (AudioContext) {
     // Alert the user
     alert("Sorry, but the Web Audio API is not supported by your browser. Please, consider upgrading to the latest version or downloading Google Chrome or Mozilla Firefox");
 }
+
+// - - -
+// Safari and Firefox don't support candAndHoldAtTime, so give them a cheap substitute
+if((navigator.userAgent.indexOf("Opera") || navigator.userAgent.indexOf('OPR')) != -1 ) 
+    {
+        console.log('Opera');
+    }
+    else if(navigator.userAgent.indexOf("Chrome") != -1 )
+    {
+        console.log('Chrome');
+    }
+    else if(navigator.userAgent.indexOf("Safari") != -1)
+    {
+       console.log('Safari');
+       let that=this;
+       let gn = audioCtx.createGain().gain;
+       if (Object.getPrototypeOf(gn).cancelAndHoldAtTime){
+        console.log("Hey, Safari supports cancelAndHoldAtTime now!!!!!")
+       } else{
+            let gn = audioCtx.createGain().gain;
+            Object.getPrototypeOf(gn).cancelAndHoldAtTime = function (t) {
+            this.cancelScheduledValues(t);
+            this.setValueAtTime(this.value, t);  
+          };
+         }
+      
+    }
+    else if(navigator.userAgent.indexOf("Firefox") != -1 ) 
+    {
+        console.log('Firefox');
+       let that=this;
+       let gn = audioCtx.createGain().gain;
+       if (Object.getPrototypeOf(gn).cancelAndHoldAtTime){
+        console.log("Hey, Firefox supports cancelAndHoldAtTime now!!!!!")
+       } else{
+            let gn = audioCtx.createGain().gain;
+            Object.getPrototypeOf(gn).cancelAndHoldAtTime = function (t) {
+            this.cancelScheduledValues(t);
+            this.setValueAtTime(this.value, t);  
+          };
+         }
+
+    }
+    else if((navigator.userAgent.indexOf("MSIE") != -1 ) || (!!document.documentMode == true )) //IF IE > 10
+    {
+      alert("IE doesn't support WebAudio (yet?)"); 
+    }  
+    else 
+    {
+       alert('unknown browser');
+    }
+//********************************************************************
+
 
 let BIGNUM = 999999999999999999999999; // need something at least 1000 times smaller than Number.MAX_VALUE!
 export {audioCtx, BIGNUM};
