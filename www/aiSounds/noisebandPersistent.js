@@ -36,7 +36,11 @@ export default function (context=audioCtx) {
 
     // do the one-time initialization of creation and connections
     var init=function(){
-      audioCtx.audioWorklet.addModule('../aisComponents/NoiseGeneratorW.js').then(() => {
+      console.log("about to call audioWorklet.addModle ")
+      // Strangely, this relative path works when serving from aisound.cloud, but not when serving locally with node or http-server
+      //audioCtx.audioWorklet.addModule('../aisComponents/NoiseGeneratorW.js').then(() => {
+      audioCtx.audioWorklet.addModule('https://aisound.cloud/aisComponents/NoiseGeneratorW.js').then(() => {
+        console.log("audioWorklet.addModle promise returned")
         noiseGeneratorNode = new AudioWorkletNode(audioCtx, 'noise-generator');
 
         m_filterNode.type="bandpass";
@@ -46,7 +50,7 @@ export default function (context=audioCtx) {
         noiseGeneratorNode.connect(m_filterNode);
         m_filterNode.connect(envGainNode);
 
-      });
+      }).catch(e=>{console.log('noisebandPersistent init error: ' + e);});
     }();
 
 

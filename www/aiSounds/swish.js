@@ -25,12 +25,17 @@ export default function (context=audioCtx) {
     var overallGain = context.createGain();
 
     var childNode;
+    
     childSndFactory().then((newsnd) => {
+      
       childNode=newsnd;
 
       childNode.connect(overallGain);
       setChildParams(0);
-    })
+      console.log('childfactory resolution')
+    }).catch(e =>{
+      console.log('child factory error')
+    });
 
 
     var myCB = {};
@@ -60,6 +65,7 @@ export default function (context=audioCtx) {
       }
     );
 
+
     var buildGraph = function(){
       //Promise is only necessary if we are loading files or worklet modules as part of the model
       return new Promise((resolve, reject) => {
@@ -84,5 +90,7 @@ export default function (context=audioCtx) {
 
 
   //return myInterface; 
-  return new Promise((resolve, reject) => { resolve(myInterface);});
+  return new Promise((resolve, reject) => { 
+    console.log('resolve myInterface');
+    resolve(myInterface);});
 }
