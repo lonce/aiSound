@@ -2,51 +2,53 @@ import aiSlider from './aiSlider.js'
 
 
 //var makesBox=function(snd,appearanceString="",sfpath) {
-var makesBox=function(snd,myWindow,sfpath) {
+var makesBox=function(snd,swin,sfpath) {
 
-	//////var myWindow = window.open('', '', astr);
-	console.log(`myWindow.document is ${myWindow.document}`)
-	//myWindow = window.open('', snd.getName(), "width = 400,height="+500+",resizable=yes,");
+	//////var swin = window.open('', '', astr);
+	console.log(`swin.document is ${swin.document}`)
+	//swin = window.open('', snd.getName(), "width = 400,height="+500+",resizable=yes,");
 	var sname = snd.getName();
 	////var astr="width = 400,height="+500+appearanceString+",location=no";
 	////console.log("sliderbox astr = " + astr)
 
 
-	//myWindow = window.open('aiSound.html', '', astr);
-	//myWindow = window.open('', '', astr);
-	/*
+	//swin = window.open('aiSound.html', '', astr);
+	//swin = window.open('', '', astr);
+
+/*	
 	// Hmmmm this isn't working for styling, event thoughthe eleents of the modal dialog look right.
-	var csslink=myWindow.document.createElement("link");
+	var csslink=swin.document.createElement("link");
 	csslink.setAttribute('rel', "stylesheet");
-	csslink.setAttribute('href', "css/sliderBox.css");
-	csslink.setAttribute('type', "text/css");
-	myWindow.document.head.appendChild(csslink);
+	csslink.setAttribute('href', "ai_css/sliderBox.css");
+	//csslink.setAttribute('type', "text/css");
+	swin.document.head.appendChild(csslink);
 	*/
 
 
-	myWindow.document.write('<html><head><title>Popup</title>');
-  	myWindow.document.write('<link rel="stylesheet" href="ai_css/sliderBox.css">');
-  	myWindow.document.write('</head><body>');
-	myWindow.document.write('</body></html>');
+	swin.document.write('<html><head><title>Popup</title>');
+	// causes "waiting for local host" on firfox
+  	swin.document.write('<link rel="stylesheet" href="ai_css/sliderBox.css">');
+  	swin.document.write('</head><body>');
+	swin.document.write('</body></html>');
+
+
+	swin.document.title=sname;
+	swin.document.about="foo";
+	swin.document.body.id="sliderWindow"
 	
-
-	myWindow.document.title=sname;
-	myWindow.document.about="foo";
-	myWindow.document.body.id="sliderBox"
-
-	myWindow.addEventListener('beforeunload', function(event) {
+	swin.addEventListener('beforeunload', function(event) {
   		snd.stop(0);
 	}, false);
 
 
-	//myWindow.document.title("aiSound");
-	var sliderdiv = myWindow.document.createElement("div")
+	//swin.document.title("aiSound");
+	var sliderdiv = swin.document.createElement("div")
 	sliderdiv.setAttribute('class', "sliderBox");
-	myWindow.document.body.appendChild(sliderdiv);
+	swin.document.body.appendChild(sliderdiv);
 
 	//var sliderdiv = document.getElementById("imgDiv");
 
-	var playBtn = myWindow.document.createElement("input")//, { type : 'button', value:'play' });
+	var playBtn = swin.document.createElement("input")//, { type : 'button', value:'play' });
 	playBtn.setAttribute('type', 'button');
 	playBtn.style.width= '80px';
 	playBtn.style.borderWidth= '2px'; 
@@ -78,7 +80,7 @@ var makesBox=function(snd,myWindow,sfpath) {
 	});
 	sliderdiv.appendChild(playBtn); 
 
-	var recBtn = myWindow.document.createElement("input")//, { type : 'button', value:'play' });
+	var recBtn = swin.document.createElement("input")//, { type : 'button', value:'play' });
 	recBtn.setAttribute('type', 'button');
 	recBtn.style.width= '80px';
 	recBtn.style.borderWidth= '2px'; 
@@ -111,9 +113,9 @@ var makesBox=function(snd,myWindow,sfpath) {
 		console.log("snd param[" + i + "] is " + snd.getParam(i,"name") + " of type " + snd.getParam(i,"type")
 			+ " with min " + snd.getParam(i,"min") + ", and max " + snd.getParam(i,"max"));
 
-		sliderdiv.appendChild(myWindow.document.createElement("br"));
+		sliderdiv.appendChild(swin.document.createElement("br"));
 		if ( ! (snd.getParam(i,"name")=='play') ) {
-			slider[i]=aiSlider(snd, i, myWindow);				
+			slider[i]=aiSlider(snd, i, swin);				
 			sliderdiv.appendChild(slider[i]);
 		}
 		
@@ -121,18 +123,18 @@ var makesBox=function(snd,myWindow,sfpath) {
 
 
 	if (snd.getAboutText()) {
-		sliderdiv.appendChild(myWindow.document.createElement("br"));
-		sliderdiv.appendChild(myWindow.document.createElement("hr"));
-		var tbox=myWindow.document.createTextNode("About: " + snd.getAboutText())
+		sliderdiv.appendChild(swin.document.createElement("br"));
+		sliderdiv.appendChild(swin.document.createElement("hr"));
+		var tbox=swin.document.createTextNode("About: " + snd.getAboutText())
 		sliderdiv.appendChild(tbox);
 	}
 
 
 	// Now add the extra functionality ===========================================
-	sliderdiv.appendChild(myWindow.document.createElement("br"));
-	sliderdiv.appendChild(myWindow.document.createElement("hr"));
+	sliderdiv.appendChild(swin.document.createElement("br"));
+	sliderdiv.appendChild(swin.document.createElement("hr"));
 
-	var queryStringButt = myWindow.document.createElement("input");
+	var queryStringButt = swin.document.createElement("input");
 	queryStringButt.setAttribute('type', 'button');
 	queryStringButt.style.width= '80px';
 	queryStringButt.style.borderWidth= '2px'; 
@@ -156,12 +158,10 @@ var makesBox=function(snd,myWindow,sfpath) {
 	});
 
 	sliderdiv.appendChild(queryStringButt); 
-	let qbuttLabel= myWindow.document.createElement("label")
+	let qbuttLabel= swin.document.createElement("label")
 	sliderdiv.appendChild(qbuttLabel);
 	qbuttLabel.innerHTML= "  - a URL you can use to share this sound in this sliderbox with these parameters.".fontsize(1);
-
-
-
+ 
 
 
 }

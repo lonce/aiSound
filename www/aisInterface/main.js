@@ -25,8 +25,8 @@ sndFactory().then((newsnd) => {
 var slist=[]
 
 var winlocation={x: 50, y: 50, update: function(){
-	winlocation.x=(winlocation.x+80)%(screen.width-500) ;
-	winlocation.y=(winlocation.y+50)%(screen.height-600);
+	//winlocation.x=(winlocation.x+80)%(screen.width-500) ;
+	//winlocation.y=(winlocation.y+50)%(screen.height-600);
 	console.log(`new window location: [${winlocation.x},${winlocation.y}]`)
 }}
 
@@ -94,7 +94,19 @@ function loadSoundFromPath(sndFactoryPath, params=[]) {
 		http://2ality.com/2017/01/import-operator.html
 		https://developers.google.com/web/updates/2017/11/dynamic-import
 	*/
-	let myWindow = window.open('', '', "width = 400,height="+500+",left="+winlocation.x+",top="+winlocation.y);
+	let wfeat="left="+winlocation.x+",top="+winlocation.y+ ",width=400,height="+500+",status=1"
+	console.log("popup woindow features = " + wfeat)
+	let myWindow = window.open('', '', wfeat);
+
+
+/*
+	var csslink=myWindow.document.createElement("link");
+	csslink.setAttribute('rel', "stylesheet");
+	csslink.setAttribute('href', "ai_css/sliderBox.css");
+	//csslink.setAttribute('type', "text/css");
+	myWindow.document.head.appendChild(csslink);
+*/
+
 	console.log(`in loadSoundFromPath, got new window = ${myWindow}`)
 	importModule("../" + sndFactoryPath)
 	.then(factory => {

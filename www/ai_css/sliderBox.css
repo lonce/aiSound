@@ -1,15 +1,23 @@
-#sliderBox {
+html {
+	width: 100% !important;
+	height: 100% !important;	
+}
+body {
+	width: 95% !important;
+	height: 95% !important;	
+	padding: 0;
+	margin: 0;
+}
+
+
+#sliderWindow {
 	background-image: url('wildtextures-leather-Campo-ivory.jpg');
-	width: 95%;
-	height: 95%;
+}
+
+.sliderBox {
 	font: 15px Gotham Book, sans-serif;
 }
-#mainPage {
-	background-image: url('hexellence/hexellence.png');
-	width: 98%;
-	height: 98%;
-	font: 15px Gotham Book, sans-serif;
-}
+
 .basicButton {
 	border-radius: 25px;
 	margin: 2px;
