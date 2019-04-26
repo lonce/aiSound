@@ -6,6 +6,8 @@
 
 (function($) {
 
+	window.alert("This site uses the language features and audio API 'standards' that only Google Chrome browsers have implemted so far.");
+
 	var	$window = $(window),
 		$body = $('body'),
 		$nav = $('#nav');
