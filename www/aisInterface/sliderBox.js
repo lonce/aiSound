@@ -125,14 +125,18 @@ var makesBox=function(snd,swin,sfpath) {
 	if (snd.getAboutText()) {
 		sliderdiv.appendChild(swin.document.createElement("br"));
 		sliderdiv.appendChild(swin.document.createElement("hr"));
-		var tbox=swin.document.createTextNode("About: " + snd.getAboutText())
+		//var tbox=swin.document.createTextNode("About: " + snd.getAboutText())
+		var tbox=swin.document.createElement("div")
+		tbox.innerHTML="About : "
+		tbox.innerHTML+=snd.getAboutText();
+		tbox.innerHTML+="<br><hr><i><font size='2'>To use an aiSound.cloud model in your own app, see this <a href='https://sonicthings.org/FMMouse/' target='_blank'>example</a></font></i>."
 		sliderdiv.appendChild(tbox);
 	}
 
 
 	// Now add the extra functionality ===========================================
+	//sliderdiv.appendChild(swin.document.createElement("br"));
 	sliderdiv.appendChild(swin.document.createElement("br"));
-	sliderdiv.appendChild(swin.document.createElement("hr"));
 
 	var queryStringButt = swin.document.createElement("input");
 	queryStringButt.setAttribute('type', 'button');
