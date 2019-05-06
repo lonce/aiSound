@@ -8,6 +8,9 @@ import {audioCtx} from '../aisCore/baseSoundModel.js';
 import FaustDjembe from "./faust.djembe/untitled.js";
 import parse_faust_ui from '../aisCore/fausthelper.js';
 
+var foo = window.location.href
+console.log(`Location is ${foo}`)
+console.log(`FaustDjembe  ${FaustDjembe}`)
 
 export default function (context=audioCtx) {
 
