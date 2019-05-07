@@ -80,7 +80,7 @@ export default function (context=audioCtx) {
           // turning the gate off does not cut off the processor from doing its reverg thing.
           setTimeout(function(){
               faustDjembeNode.setParamValue("/untitled/gate", 0)
-          }, 10)
+          }, 50)
     };
 
 

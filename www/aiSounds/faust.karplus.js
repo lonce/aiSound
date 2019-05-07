@@ -72,7 +72,14 @@ export default function (context=audioCtx) {
     
     myCB.onPlay = function(startVal=context.currentTime, releaseVal=null){
           //faustNode.setParamValue("/untitled/gate", 0)
-          faustNode.setParamValue("/karplus/gate", 1)
+          faustNode.setParamValue("/karplus/gate", 1);
+          //graphPlayingP = true;
+
+          // These sounds need to have gate set to zero to be replayed
+          setTimeout(function(){
+            faustNode.setParamValue("/karplus/gate", 0)
+          },50);
+
           
     };
 
