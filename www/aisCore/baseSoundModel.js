@@ -2,6 +2,7 @@ import CompositeAudioNode from '../aisCore/Compositional.js';
 import * as utils from '../aisCore/utils.js';
 import resourceManager from '../aisCore/audioResourceManager.js'
 
+let resourceHost="https://aisound.cloud"
 //**********  nonsense for different browsers **********************************
 var audioCtx; // the same, just one, for all sounds
 var AudioContext = window.AudioContext // Default
@@ -83,7 +84,7 @@ if((navigator.userAgent.indexOf("Opera") || navigator.userAgent.indexOf('OPR')) 
 
 
 let BIGNUM = 999999999999999999999999; // need something at least 1000 times smaller than Number.MAX_VALUE!
-export {audioCtx, BIGNUM};
+export {audioCtx, BIGNUM, resourceHost};
 
 class baseSound extends CompositeAudioNode {
 	constructor (context=audioCtx, options={}) {  // could pass in your own, but we got one for all sounds all ready 
@@ -98,8 +99,9 @@ class baseSound extends CompositeAudioNode {
     		this.node.onPlay=function(){};
         this.node.onRelease=function(){this.stop()};
         this.node.onStop=function(){this.stop()};
+        this.node.BIGNUM=BIGNUM; // give this to all sounds for their enjoyment
+  
     	}
-      this.node.BIGNUM=BIGNUM; // give this to all sounds for their enjoyment
 
       // baseSound Variables 
       this.context=context;

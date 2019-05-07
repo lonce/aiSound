@@ -25,7 +25,7 @@ export default function (context=audioCtx) {
     var sm={
       buffLoaded : false,
       soundBuff : context.createBuffer(2,2,44100),
-      m_soundUrl : "https://aisound.cloud/audioResources/hihat.wav",
+      m_soundUrl : resourceHost+ "https://aisound.cloud/audioResources/hihat.wav",
       loadedCB: function onLoadAudioResource(b){
         sm.soundBuff = b;
         sm.buffLoaded = true;

@@ -4,7 +4,7 @@
   (The amplitude envelope is computered entirely separatey in EnvGain - we do need a callback 
   from envGain in order to know when we can clean up our throwaway nodes.)
   */
-import {audioCtx} from '../aisCore/baseSoundModel.js';
+import {audioCtx, resourceHost} from '../aisCore/baseSoundModel.js';
 import FaustFactory from "./faust.karplus/karplus_exfaust97.js";
 import parse_faust_ui from '../aisCore/fausthelper.js';
 
@@ -15,7 +15,7 @@ export default function (context=audioCtx) {
     var m_Gain=.5;
 
     // directory of faust object
-    var ffact = new FaustFactory(audioCtx, './aiSounds/faust.karplus');
+    var ffact = new FaustFactory(audioCtx, resourceHost+'./aiSounds/faust.karplus');
     var faustNode;
 
 

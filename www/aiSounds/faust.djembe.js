@@ -4,20 +4,18 @@
   (The amplitude envelope is computered entirely separatey in EnvGain - we do need a callback 
   from envGain in order to know when we can clean up our throwaway nodes.)
   */
-import {audioCtx} from '../aisCore/baseSoundModel.js';
+import {audioCtx, resourceHost} from '../aisCore/baseSoundModel.js';
 import FaustDjembe from "./faust.djembe/untitled.js";
 import parse_faust_ui from '../aisCore/fausthelper.js';
 
-var foo = window.location.href
-console.log(`Location is ${foo}`)
-console.log(`FaustDjembe  ${FaustDjembe}`)
 
 export default function (context=audioCtx) {
 
     const gainNode = audioCtx.createGain(); 
     var m_Gain=.5;
 
-    var ffact = new FaustDjembe(audioCtx, './aiSounds/faust.djembe');
+    var ffact = new FaustDjembe(audioCtx, resourceHost+'/aiSounds/faust.djembe');
+    //var ffact = new FaustDjembe(audioCtx);
     var faustDjembeNode;
 
 
@@ -61,10 +59,11 @@ export default function (context=audioCtx) {
 
               function (i_val) {
                 m_Gain = i_val;
-                gainNode.gain.setValueAtTime(m_Gain,context.currentTime);
+                gainNode.gain.setValueAtTime(10*m_Gain,context.currentTime);
 
               }
           );
+          myInterface.setParam("Gain", .5);
 
           resolve(); // resolve buildGraph
         });
