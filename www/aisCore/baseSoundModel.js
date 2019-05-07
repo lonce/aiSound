@@ -2,7 +2,8 @@ import CompositeAudioNode from '../aisCore/Compositional.js';
 import * as utils from '../aisCore/utils.js';
 import resourceManager from '../aisCore/audioResourceManager.js'
 
-let resourceHost="https://aisound.cloud"
+//let resourceHost="https://aisound.cloud"
+let resourceHost="http://localhost:8080"
 //**********  nonsense for different browsers **********************************
 var audioCtx; // the same, just one, for all sounds
 var AudioContext = window.AudioContext // Default

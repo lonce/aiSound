@@ -15,7 +15,7 @@ export default function (context=audioCtx) {
     var m_Gain=.5;
 
     // directory of faust object
-    var ffact = new FaustFactory(audioCtx, resourceHost+'./aiSounds/faust.karplus');
+    var ffact = new FaustFactory(audioCtx, resourceHost+'/aiSounds/faust.karplus');
     var faustNode;
 
 

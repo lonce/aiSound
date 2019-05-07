@@ -67,13 +67,13 @@ var polywog=function(sfactory, numPoly, ...theRest){
              }
            }
 
-           console.log("   polyWog will play voice zombie ps" + nextPoly)
+           console.log(`   polyWog will play voiceList[${nextPoly}]`)
            voiceList[nextPoly].play(stime, etime);
            lastPoly=nextPoly;
            nextPoly=nextAvailableVoice(lastPoly);
            
          } else{ // play the specific one requested using previously set parameters
-            console.log("   polyWog will play voice previousp" + id)
+            console.log("   polyWog will play specifically requested voice " + id)
             voiceList[id].play(stime, etime);
             lastPoly=id;
             if (id==nextPoly){

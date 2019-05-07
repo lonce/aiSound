@@ -5,7 +5,7 @@
   from envGain in order to know when we can clean up our throwaway nodes.)
   */
 import {audioCtx, resourceHost} from '../aisCore/baseSoundModel.js';
-import FaustFactory from "./faust.exfaust21/exfaust21.js";
+import FaustFactory from "./faust.clarinet/exfaust87.js";
 import parse_faust_ui from '../aisCore/fausthelper.js';
 
 
@@ -13,16 +13,17 @@ export default function (context=audioCtx) {
 
     const gainNode = audioCtx.createGain(); 
     var m_Gain=.5;
+    var m_Pressure=.6;
 
-    var ffact = new FaustFactory(audioCtx, resourceHost+'/aiSounds/faust.exfaust21');
+    var ffact = new FaustFactory(audioCtx, resourceHost+'/aiSounds/faust.clarinet');
     var faustNode;
 
 
     //graphPlayingP = false;
     var myCB = {};
     var myInterface = context.createBaseSound(context, {node: myCB,  output: gainNode});
-    myInterface.setAboutText("<a href='https://faust.grame.fr/' target='_blank'>Faust</a> exfaust21 demo synth exported as wasmjs-worklet node, then wrapped snuggly for aiSound.cloud usage.")
-    myInterface.setName("faust.exfaust21")
+    myInterface.setAboutText("<a href='https://faust.grame.fr/' target='_blank'>Faust</a> clarinet demo synth exported as wasmjs-worklet node, then wrapped snuggly for aiSound.cloud usage.")
+    myInterface.setName("faust.clarinet")
 
 
     // This model just needs a one-time graph creation
@@ -35,10 +36,24 @@ export default function (context=audioCtx) {
           var pui = parse_faust_ui(faustNode.descriptor);
           console.log("created  faust node = " + faustNode)
 
+          myInterface.registerParam(
+              "Pressure", "range",
+              {"min": 0, "max": 1, "val": m_Pressure},
+              function (i_val) {
+                m_Pressure=i_val;
+                if (myInterface.isPlaying(audioCtx.currentTime)){
+                  faustNode.setParamValue("/clarinet/blower/pressure", m_Pressure)
+                }
+
+              }
+          );
+
+
+
           // register all the faust object parameters
           for(let i=0;i<pui.length;i++){
               console.log(`param ${i} is ${JSON.stringify(pui[i])}`)
-              if (pui[i].label != "gate" && pui[i].label != "gain"){
+              if (pui[i].label != "gate" && pui[i].label != "gain" && pui[i].label != "pressure"){
                 myInterface.registerParam(
                   pui[i].label, "range",
                   {"min" : pui[i].min, "max" : pui[i].max, "val" : pui[i].value},
@@ -70,19 +85,17 @@ export default function (context=audioCtx) {
     }; 
     
     myCB.onPlay = function(startVal=context.currentTime, releaseVal=null){
-          //faustNode.setParamValue("/untitled/gate", 0)
-          faustNode.setParamValue("/exfaust21/gate", 1)
+          faustNode.setParamValue("/clarinet/blower/pressure", m_Pressure)
           
     };
 
 
-
     myCB.onRelease = function (when=context.currentTime){
-      faustNode.setParamValue("/exfaust21/gate", 0)
+      faustNode.setParamValue("/clarinet/blower/pressure", 0)
     };
 
     myCB.onStop = function(val=0){
-      faustNode.setParamValue("/exfaust21/gate", 0)
+      faustNode.setParamValue("/clarinet/blower/pressure", 0)
     };
 
     var cleanUp=function(val){
