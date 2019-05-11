@@ -23,7 +23,7 @@ console.log("audioCtx is " + audioCtx)
 export default function (context=audioCtx, clockInterval=.05, genAheadInterval=.08) {
 
 	var m_freq = 1; // seconds
-	var m_currentPhase = 0; //[0,1]
+	var m_currentPhase = .9999999; //[0,1]
 	var m_currentTime=0; 
 	var m_runningP=false;
 
